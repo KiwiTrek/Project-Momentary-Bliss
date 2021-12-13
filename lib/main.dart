@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:community_material_icon/community_material_icon.dart';
+import 'globals.dart';
 
 void main() async {
   // For Firebase
@@ -19,19 +21,14 @@ class MyApp extends StatelessWidget {
     final db = FirebaseFirestore.instance;
     return MaterialApp(
       title: 'Bentleys of Doom App',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.purple),
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: const Text("FreundQuest"),
+        ),
         body: StreamBuilder(
           stream: db.doc("/Testing/qtuQ0ddx22pLoPFNcOs3").snapshots(),
           builder: (
@@ -48,6 +45,16 @@ class MyApp extends StatelessWidget {
               return const Center(child: Text("Null!"));
             }
           },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.task), label: "Checklist"),
+            BottomNavigationBarItem(
+                icon: Icon(CommunityMaterialIcons.treasure_chest),
+                label: "Rewards")
+          ],
+          backgroundColor: darkPurple,
+          fixedColor: Colors.white,
         ),
       ),
     );
