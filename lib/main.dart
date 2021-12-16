@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:momentary_bliss/models/globals.dart';
 import 'package:momentary_bliss/screens/todos_list_screen.dart';
+import 'package:momentary_bliss/screens/rewards_list_screen.dart';
+import 'package:momentary_bliss/screens/friends_list_screen.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 const String user = "C7SK12awVm132rddXTQE"; //sample@gmail.com
 
@@ -22,62 +22,61 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final db = FirebaseFirestore.instance;
-    final stream = db.doc("/Users/$user").snapshots();
     return MaterialApp(
       title: 'Bentleys of Doom App',
-      theme: ThemeData(primarySwatch: Colors.purple),
+      theme: ThemeData(primarySwatch: Colors.blueGrey),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("FreundQuest"),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: StreamBuilder(
-                  stream: stream,
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
-                        snapshot,
-                  ) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    final doc = snapshot.data!;
-                    final data = doc.data()!;
-                    if (doc.data() != null) {
-                      return Row(
-                        children: [
-                          const Icon(IcoFontIcons.moneyBag),
-                          const SizedBox(width: 1),
-                          Text(data['coins'].toString(),
-                              style: const TextStyle(fontSize: 18))
-                        ],
-                      );
-                    } else {
-                      return Row(
-                        children: const [
-                          Icon(IcoFontIcons.moneyBag),
-                          Text("<undefined>"),
-                        ],
-                      );
-                    }
-                  }),
-            )
-          ],
-        ),
-        body: const TodoListScreen(user: user),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.task), label: "Checklist"),
-            BottomNavigationBarItem(
-                icon: Icon(CommunityMaterialIcons.treasure_chest),
-                label: "Rewards")
-          ],
-          backgroundColor: darkPurple,
-          fixedColor: Colors.white,
-        ),
+      home: PersistentTabView(
+        context,
+        screens: const [
+          TodoListScreen(user: user),
+          RewardListScreen(user: user),
+          FriendListScreen(user: user)
+        ],
+        items: [
+          PersistentBottomNavBarItem(
+            icon: const Icon(Icons.task),
+            title: ("Quests"),
+            activeColorPrimary: Colors.purple,
+            inactiveColorPrimary: Colors.grey,
+            routeAndNavigatorSettings: RouteAndNavigatorSettings(
+              initialRoute: '/quest',
+              routes: {
+                '/quest': (context) => const TodoListScreen(user: user),
+                '/reward': (context) => const RewardListScreen(user: user),
+                '/friends': (context) => const FriendListScreen(user: user)
+              },
+            ),
+          ),
+          PersistentBottomNavBarItem(
+            icon: const Icon(CommunityMaterialIcons.treasure_chest),
+            title: ("Rewards"),
+            activeColorPrimary: Colors.deepOrange,
+            inactiveColorPrimary: Colors.grey,
+            routeAndNavigatorSettings: RouteAndNavigatorSettings(
+              initialRoute: '/quest',
+              routes: {
+                '/quest': (context) => const TodoListScreen(user: user),
+                '/reward': (context) => const RewardListScreen(user: user),
+                '/friends': (context) => const FriendListScreen(user: user)
+              },
+            ),
+          ),
+          PersistentBottomNavBarItem(
+            icon: const Icon(Icons.people),
+            title: ("Friends"),
+            activeColorPrimary: Colors.green,
+            inactiveColorPrimary: Colors.grey,
+            routeAndNavigatorSettings: RouteAndNavigatorSettings(
+              initialRoute: '/quest',
+              routes: {
+                '/quest': (context) => const TodoListScreen(user: user),
+                '/reward': (context) => const RewardListScreen(user: user),
+                '/friends': (context) => const FriendListScreen(user: user)
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

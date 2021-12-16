@@ -27,8 +27,9 @@ Stream<List<Todo>> userTodoSnapshots(String user) {
 
 void addTodo(String user, String what, int value) {
   final db = FirebaseFirestore.instance;
-  db.collection("/Users/$user/todos").add(
-      {'what': what, 'done': false, 'date': Timestamp.now(), 'value': value});
+  db
+      .collection("/Users/$user/todos")
+      .add({'what': what, 'date': Timestamp.now(), 'value': value});
 }
 
 void deleteTodo(String user, String docId) {

@@ -12,8 +12,7 @@ class Reward {
 
 Stream<List<Reward>> userRewardSnapshots(String user) {
   final db = FirebaseFirestore.instance;
-  final stream =
-      db.collection("/Users/$user/rewards").orderBy("date").snapshots();
+  final stream = db.collection("/Users/$user/rewards").snapshots();
   return stream.map((query) {
     List<Reward> rewards = [];
     for (final doc in query.docs) {
@@ -25,22 +24,22 @@ Stream<List<Reward>> userRewardSnapshots(String user) {
 
 void updateChecked(String user, String docId, bool value) {
   final db = FirebaseFirestore.instance;
-  db.doc("/users/$user/rewards/$docId").update({'done': value});
+  db.doc("/Users/$user/rewards/$docId").update({'done': value});
 }
 
 void addReward(String user, String what, int value) {
   final db = FirebaseFirestore.instance;
-  db.collection("/users/$user/rewards").add({'what': what, 'value': value});
+  db.collection("/Users/$user/rewards").add({'what': what, 'value': value});
 }
 
 void deleteReward(String user, String docId) {
   final db = FirebaseFirestore.instance;
-  db.doc("/users/$user/rewards/$docId").delete();
+  db.doc("/Users/$user/rewards/$docId").delete();
 }
 
 void undeleteReward(String user, Reward reward) {
   final db = FirebaseFirestore.instance;
   db
-      .doc("/users/$user/rewards/${reward.id}")
+      .doc("/Users/$user/rewards/${reward.id}")
       .set({'what': reward.what, 'value': reward.value});
 }

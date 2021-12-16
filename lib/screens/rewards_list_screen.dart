@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:momentary_bliss/models/globals.dart';
-import 'package:momentary_bliss/models/todo.dart';
+import 'package:momentary_bliss/models/reward.dart';
 import 'package:provider/provider.dart';
 
-class TodoListScreen extends StatelessWidget {
+class RewardListScreen extends StatelessWidget {
   final String user;
 
-  const TodoListScreen({
+  const RewardListScreen({
     Key? key,
     required this.user,
   }) : super(key: key);
@@ -19,8 +19,8 @@ class TodoListScreen extends StatelessWidget {
     return Provider.value(
       value: user,
       builder: (context, _) => StreamBuilder(
-        stream: userTodoSnapshots(user),
-        builder: (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
+        stream: userRewardSnapshots(user),
+        builder: (BuildContext context, AsyncSnapshot<List<Reward>> snapshot) {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error!);
           }
@@ -43,15 +43,15 @@ class TodoListScreen extends StatelessWidget {
 }
 
 class _Screen extends StatefulWidget {
-  final List<Todo> todos;
+  final List<Reward> rewards;
   final String user;
-  const _Screen(this.todos, this.user);
+  const _Screen(this.rewards, this.user);
 
   @override
   _ScreenState createState() => _ScreenState();
 }
 
-class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
+class _ScreenState extends State<_Screen> {
   //The text editors
   late TextEditingController whatController;
   late TextEditingController valueController;
@@ -59,7 +59,6 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
     whatController = TextEditingController();
     valueController = TextEditingController();
   }
@@ -77,20 +76,20 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
     db.doc("/Users/$userId").get().then((doc) {
       Map<String, dynamic> data = doc.data()!;
       current = data['coins'];
-      current += value;
+      current -= value;
       db.doc("/Users/$userId").update({'coins': current});
     });
   }
 
-  void deleteWithUndo(BuildContext context, Todo todo) {
-    deleteTodo(context.read<String>(), todo.id);
+  void deleteWithUndo(BuildContext context, Reward reward) {
+    deleteReward(context.read<String>(), reward.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("You deleted '${todo.what}'"),
+        content: Text("You deleted '${reward.what}'"),
         action: SnackBarAction(
           label: "UNDO",
           onPressed: () {
-            undeleteTodo(context.read<String>(), todo);
+            undeleteReward(context.read<String>(), reward);
           },
         ),
       ),
@@ -102,13 +101,12 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
     return Column(
       children: [
         Container(
-          decoration: const BoxDecoration(color: darkPurple),
+          decoration: const BoxDecoration(color: Colors.orange),
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
             child: Row(
               children: [
-                const Text("Quests",
+                const Text("Rewards",
                     style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
@@ -162,22 +160,22 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
         const Divider(
           height: 0,
           thickness: 2,
-          color: purple,
+          color: Colors.deepOrange,
         ),
         Expanded(
           child: ListView.separated(
-            itemCount: widget.todos.length,
+            itemCount: widget.rewards.length,
             itemBuilder: (context, index) {
-              final todo = widget.todos[index];
+              final reward = widget.rewards[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Container(
                   decoration: BoxDecoration(
-                      border: Border.all(color: darkPurple),
+                      border: Border.all(color: Colors.orange),
                       borderRadius: BorderRadius.circular(8.0)),
                   child: ListTile(
                     title: Text(
-                      todo.what,
+                      reward.what,
                     ),
                     trailing: SizedBox(
                       width: 105,
@@ -189,7 +187,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                             color: orange,
                           ),
                           const SizedBox(width: 2),
-                          Text("${todo.value}",
+                          Text("-${reward.value}",
                               style: const TextStyle(fontSize: 32)),
                         ],
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -198,20 +196,18 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                     leading: IconButton(
                       icon: const Icon(
                         Icons.check,
-                        color: purple,
+                        color: Colors.amber,
                       ),
                       onPressed: () {
-                        deleteTodo(context.read<String>(), todo.id);
-                        updateCoins(widget.user, todo.value);
+                        updateCoins(widget.user, reward.value);
                       },
                     ),
                     onTap: () {
-                      deleteTodo(context.read<String>(), todo.id);
-                      updateCoins(widget.user, todo.value);
+                      updateCoins(widget.user, reward.value);
                     },
                     //Add dash for trashcan to appear
                     onLongPress: () {
-                      deleteWithUndo(context, todo);
+                      deleteWithUndo(context, reward);
                     },
                   ),
                 ),
@@ -227,6 +223,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
 
         // The "Add task part", should be on a separated screen
         Material(
+          elevation: 20,
           child: Padding(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -235,11 +232,11 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
             child: Row(
               children: [
                 Expanded(
-                  child: TextFormField(
+                  child: TextField(
                     controller: whatController,
-                    cursorColor: Colors.purpleAccent,
+                    cursorColor: Colors.deepOrangeAccent,
                     decoration:
-                        const InputDecoration(hintText: "Create a new quest"),
+                        const InputDecoration(hintText: "Set a new reward"),
                   ),
                 ),
                 const SizedBox(width: 7),
@@ -250,7 +247,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly,
                     ],
-                    cursorColor: Colors.purpleAccent,
+                    cursorColor: Colors.deepOrangeAccent,
                     decoration:
                         const InputDecoration(hintText: "& add its value"),
                   ),
@@ -258,12 +255,12 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                 IconButton(
                   icon: const Icon(
                     Icons.add,
-                    color: Colors.purpleAccent,
+                    color: Colors.deepOrangeAccent,
                   ),
                   onPressed: () {
                     if (whatController.text.isNotEmpty &&
                         valueController.text.isNotEmpty) {
-                      addTodo(context.read<String>(), whatController.text,
+                      addReward(context.read<String>(), whatController.text,
                           int.parse(valueController.text));
                       whatController.clear();
                       valueController.clear();
