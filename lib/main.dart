@@ -6,6 +6,7 @@ import 'package:momentary_bliss/screens/auth_gate.dart';
 import 'package:momentary_bliss/screens/friends_list_screen.dart';
 import 'package:momentary_bliss/screens/rewards_list_screen.dart';
 import 'package:momentary_bliss/screens/todos_list_screen.dart';
+import 'package:momentary_bliss/screens/user_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 void main() async {
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
         screens: [
           TodoListScreen(user: user.email.toString()),
           RewardListScreen(user: user.email.toString()),
-          FriendListScreen(user: user.email.toString())
+          FriendListScreen(user: user.email.toString()),
+          UserScreen(user: user)
         ],
         items: [
           PersistentBottomNavBarItem(
@@ -49,7 +51,8 @@ class MyApp extends StatelessWidget {
                 '/reward': (context) =>
                     RewardListScreen(user: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString())
+                    FriendListScreen(user: user.email.toString()),
+                '/user': (context) => UserScreen(user: user),
               },
             ),
           ),
@@ -66,12 +69,13 @@ class MyApp extends StatelessWidget {
                 '/reward': (context) =>
                     RewardListScreen(user: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString())
+                    FriendListScreen(user: user.email.toString()),
+                '/user': (context) => UserScreen(user: user),
               },
             ),
           ),
           PersistentBottomNavBarItem(
-            icon: const Icon(Icons.people),
+            icon: const Icon(Icons.people_alt),
             title: ("Friends"),
             activeColorPrimary: Colors.green,
             inactiveColorPrimary: Colors.grey,
@@ -83,18 +87,31 @@ class MyApp extends StatelessWidget {
                 '/reward': (context) =>
                     RewardListScreen(user: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString())
+                    FriendListScreen(user: user.email.toString()),
+                '/user': (context) => UserScreen(user: user),
               },
             ),
           ),
           // Will probably become User screen with settings
 
-          // PersistentBottomNavBarItem(
-          //     icon: const Icon(Icons.logout),
-          //     title: ("Logout"),
-          //     activeColorPrimary: Colors.black87,
-          //     inactiveColorPrimary: Colors.grey,
-          //     onPressed: (p0) => FirebaseAuth.instance.signOut())
+          PersistentBottomNavBarItem(
+            icon: const Icon(Icons.person),
+            title: ("My Profile"),
+            activeColorPrimary: Colors.blue,
+            inactiveColorPrimary: Colors.grey,
+            routeAndNavigatorSettings: RouteAndNavigatorSettings(
+              initialRoute: '/quest',
+              routes: {
+                '/quest': (context) =>
+                    TodoListScreen(user: user.email.toString()),
+                '/reward': (context) =>
+                    RewardListScreen(user: user.email.toString()),
+                '/friends': (context) =>
+                    FriendListScreen(user: user.email.toString()),
+                '/user': (context) => UserScreen(user: user),
+              },
+            ),
+          ),
         ],
       ),
     );

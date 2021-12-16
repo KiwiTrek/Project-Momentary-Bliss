@@ -51,7 +51,7 @@ class _Screen extends StatefulWidget {
   _ScreenState createState() => _ScreenState();
 }
 
-class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
+class _ScreenState extends State<_Screen> {
   //The text editors
   late TextEditingController whatController;
   late TextEditingController valueController;
