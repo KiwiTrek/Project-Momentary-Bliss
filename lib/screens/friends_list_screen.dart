@@ -1,10 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:momentary_bliss/models/globals.dart';
-import 'package:momentary_bliss/models/todo.dart';
-import 'package:provider/provider.dart';
 
 class FriendListScreen extends StatelessWidget {
   final String user;

@@ -78,6 +78,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
       Map<String, dynamic> data = doc.data()!;
       current = data['coins'];
       current += value;
+      if (current >= 999999) current = 999999;
       db.doc("/Users/$userId").update({'coins': current});
     });
   }
@@ -263,8 +264,10 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                   onPressed: () {
                     if (whatController.text.isNotEmpty &&
                         valueController.text.isNotEmpty) {
-                      addTodo(context.read<String>(), whatController.text,
-                          int.parse(valueController.text));
+                      int value = int.parse(valueController.text);
+                      if (value >= 999) value = 999;
+                      addTodo(
+                          context.read<String>(), whatController.text, value);
                       whatController.clear();
                       valueController.clear();
                     }

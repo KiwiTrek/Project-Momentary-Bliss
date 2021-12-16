@@ -77,6 +77,7 @@ class _ScreenState extends State<_Screen> {
       Map<String, dynamic> data = doc.data()!;
       current = data['coins'];
       current -= value;
+      if (current <= 0) current = 0;
       db.doc("/Users/$userId").update({'coins': current});
     });
   }
@@ -260,8 +261,10 @@ class _ScreenState extends State<_Screen> {
                   onPressed: () {
                     if (whatController.text.isNotEmpty &&
                         valueController.text.isNotEmpty) {
-                      addReward(context.read<String>(), whatController.text,
-                          int.parse(valueController.text));
+                      int value = int.parse(valueController.text);
+                      if (value >= 999) value = 999;
+                      addReward(
+                          context.read<String>(), whatController.text, value);
                       whatController.clear();
                       valueController.clear();
                     }

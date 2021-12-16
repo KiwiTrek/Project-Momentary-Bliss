@@ -1,19 +1,20 @@
+import 'package:community_material_icon/community_material_icon.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:community_material_icon/community_material_icon.dart';
-import 'package:momentary_bliss/screens/todos_list_screen.dart';
-import 'package:momentary_bliss/screens/rewards_list_screen.dart';
+import 'package:momentary_bliss/screens/auth_gate.dart';
 import 'package:momentary_bliss/screens/friends_list_screen.dart';
+import 'package:momentary_bliss/screens/rewards_list_screen.dart';
+import 'package:momentary_bliss/screens/todos_list_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-
-const String user = "C7SK12awVm132rddXTQE"; //sample@gmail.com
 
 void main() async {
   // For Firebase
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // await dotenv.load(fileName: '.env');
 
-  runApp(const MyApp());
+  runApp(const AuthGate(app: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -22,16 +23,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
     return MaterialApp(
       title: 'Bentleys of Doom App',
       theme: ThemeData(primarySwatch: Colors.blueGrey),
       debugShowCheckedModeBanner: false,
       home: PersistentTabView(
         context,
-        screens: const [
-          TodoListScreen(user: user),
-          RewardListScreen(user: user),
-          FriendListScreen(user: user)
+        screens: [
+          TodoListScreen(user: user.email.toString()),
+          RewardListScreen(user: user.email.toString()),
+          FriendListScreen(user: user.email.toString())
         ],
         items: [
           PersistentBottomNavBarItem(
@@ -42,9 +44,12 @@ class MyApp extends StatelessWidget {
             routeAndNavigatorSettings: RouteAndNavigatorSettings(
               initialRoute: '/quest',
               routes: {
-                '/quest': (context) => const TodoListScreen(user: user),
-                '/reward': (context) => const RewardListScreen(user: user),
-                '/friends': (context) => const FriendListScreen(user: user)
+                '/quest': (context) =>
+                    TodoListScreen(user: user.email.toString()),
+                '/reward': (context) =>
+                    RewardListScreen(user: user.email.toString()),
+                '/friends': (context) =>
+                    FriendListScreen(user: user.email.toString())
               },
             ),
           ),
@@ -56,9 +61,12 @@ class MyApp extends StatelessWidget {
             routeAndNavigatorSettings: RouteAndNavigatorSettings(
               initialRoute: '/quest',
               routes: {
-                '/quest': (context) => const TodoListScreen(user: user),
-                '/reward': (context) => const RewardListScreen(user: user),
-                '/friends': (context) => const FriendListScreen(user: user)
+                '/quest': (context) =>
+                    TodoListScreen(user: user.email.toString()),
+                '/reward': (context) =>
+                    RewardListScreen(user: user.email.toString()),
+                '/friends': (context) =>
+                    FriendListScreen(user: user.email.toString())
               },
             ),
           ),
@@ -70,12 +78,23 @@ class MyApp extends StatelessWidget {
             routeAndNavigatorSettings: RouteAndNavigatorSettings(
               initialRoute: '/quest',
               routes: {
-                '/quest': (context) => const TodoListScreen(user: user),
-                '/reward': (context) => const RewardListScreen(user: user),
-                '/friends': (context) => const FriendListScreen(user: user)
+                '/quest': (context) =>
+                    TodoListScreen(user: user.email.toString()),
+                '/reward': (context) =>
+                    RewardListScreen(user: user.email.toString()),
+                '/friends': (context) =>
+                    FriendListScreen(user: user.email.toString())
               },
             ),
           ),
+          // Will probably become User screen with settings
+
+          // PersistentBottomNavBarItem(
+          //     icon: const Icon(Icons.logout),
+          //     title: ("Logout"),
+          //     activeColorPrimary: Colors.black87,
+          //     inactiveColorPrimary: Colors.grey,
+          //     onPressed: (p0) => FirebaseAuth.instance.signOut())
         ],
       ),
     );
