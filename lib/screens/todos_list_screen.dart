@@ -55,6 +55,7 @@ class _ScreenState extends State<_Screen> {
   //The text editors
   late TextEditingController whatController;
   late TextEditingController valueController;
+  bool isDaily = false;
 
   @override
   void initState() {
@@ -180,6 +181,7 @@ class _ScreenState extends State<_Screen> {
                     title: Text(
                       todo.what,
                     ),
+                    subtitle: todo.isDaily ? const Text("Daily Quest") : null,
                     trailing: SizedBox(
                       width: 105,
                       child: Row(
@@ -202,12 +204,16 @@ class _ScreenState extends State<_Screen> {
                         color: purple,
                       ),
                       onPressed: () {
-                        deleteTodo(context.read<String>(), todo.id);
+                        if (todo.isDaily == false) {
+                          deleteTodo(context.read<String>(), todo.id);
+                        }
                         updateCoins(widget.user, todo.value);
                       },
                     ),
                     onTap: () {
-                      deleteTodo(context.read<String>(), todo.id);
+                      if (todo.isDaily == false) {
+                        deleteTodo(context.read<String>(), todo.id);
+                      }
                       updateCoins(widget.user, todo.value);
                     },
                     //Add dash for trashcan to appear
@@ -239,8 +245,7 @@ class _ScreenState extends State<_Screen> {
                   child: TextFormField(
                     controller: whatController,
                     cursorColor: Colors.purpleAccent,
-                    decoration:
-                        const InputDecoration(hintText: "Create a new quest"),
+                    decoration: const InputDecoration(hintText: "Create quest"),
                   ),
                 ),
                 const SizedBox(width: 7),
@@ -252,9 +257,26 @@ class _ScreenState extends State<_Screen> {
                       FilteringTextInputFormatter.digitsOnly,
                     ],
                     cursorColor: Colors.purpleAccent,
-                    decoration:
-                        const InputDecoration(hintText: "& add its value"),
+                    decoration: const InputDecoration(hintText: "& add value"),
                   ),
+                ),
+                Column(
+                  children: [
+                    const Text(
+                      "Daily Quest",
+                      style: TextStyle(color: Colors.purple),
+                    ),
+                    Checkbox(
+                      value: isDaily,
+                      onChanged: (value) {
+                        setState(() {
+                          isDaily = value!;
+                        });
+                      },
+                      checkColor: Colors.purpleAccent[50],
+                      activeColor: Colors.purple[200],
+                    ),
+                  ],
                 ),
                 IconButton(
                   icon: const Icon(
@@ -266,10 +288,13 @@ class _ScreenState extends State<_Screen> {
                         valueController.text.isNotEmpty) {
                       int value = int.parse(valueController.text);
                       if (value >= 999) value = 999;
-                      addTodo(
-                          context.read<String>(), whatController.text, value);
+                      addTodo(context.read<String>(), whatController.text,
+                          value, isDaily);
                       whatController.clear();
                       valueController.clear();
+                      setState(() {
+                        isDaily = false;
+                      });
                     }
                   },
                 ),

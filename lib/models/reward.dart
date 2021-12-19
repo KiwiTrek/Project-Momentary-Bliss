@@ -22,11 +22,6 @@ Stream<List<Reward>> userRewardSnapshots(String user) {
   });
 }
 
-void updateChecked(String user, String docId, bool value) {
-  final db = FirebaseFirestore.instance;
-  db.doc("/Users/$user/rewards/$docId").update({'done': value});
-}
-
 void addReward(String user, String what, int value) {
   final db = FirebaseFirestore.instance;
   db.collection("/Users/$user/rewards").add({'what': what, 'value': value});

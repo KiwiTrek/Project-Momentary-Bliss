@@ -2,7 +2,6 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:momentary_bliss/models/globals.dart';
 import 'package:momentary_bliss/screens/auth_gate.dart';
 import 'package:momentary_bliss/screens/friends_list_screen.dart';
 import 'package:momentary_bliss/screens/notifications_screen.dart';
@@ -56,7 +55,8 @@ class MyApp extends StatelessWidget {
                 '/friends': (context) =>
                     FriendListScreen(user: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) => NotificationScreen(user: user.email.toString()),
+                '/notifications': (context) =>
+                    NotificationScreen(user: user.email.toString()),
               },
             ),
           ),
@@ -75,7 +75,8 @@ class MyApp extends StatelessWidget {
                 '/friends': (context) =>
                     FriendListScreen(user: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) => NotificationScreen(user: user.email.toString()),
+                '/notifications': (context) =>
+                    NotificationScreen(user: user.email.toString()),
               },
             ),
           ),
@@ -94,11 +95,11 @@ class MyApp extends StatelessWidget {
                 '/friends': (context) =>
                     FriendListScreen(user: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) => NotificationScreen(user: user.email.toString()),
+                '/notifications': (context) =>
+                    NotificationScreen(user: user.email.toString()),
               },
             ),
           ),
-
           PersistentBottomNavBarItem(
             icon: const Icon(Icons.notifications),
             title: ("Notifications"),
@@ -114,11 +115,11 @@ class MyApp extends StatelessWidget {
                 '/friends': (context) =>
                     FriendListScreen(user: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) => NotificationScreen(user: user.email.toString()),
+                '/notifications': (context) =>
+                    NotificationScreen(user: user.email.toString()),
               },
             ),
           ),
-
           PersistentBottomNavBarItem(
             icon: const Icon(Icons.person),
             title: ("My Profile"),
@@ -134,7 +135,8 @@ class MyApp extends StatelessWidget {
                 '/friends': (context) =>
                     FriendListScreen(user: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) => NotificationScreen(user: user.email.toString()),
+                '/notifications': (context) =>
+                    NotificationScreen(user: user.email.toString()),
               },
             ),
           ),

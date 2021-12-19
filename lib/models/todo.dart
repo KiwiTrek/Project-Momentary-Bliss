@@ -5,11 +5,13 @@ class Todo {
   String what;
   DateTime? date;
   int value;
+  bool isDaily;
 
   Todo.fromFirestore(this.id, Map<String, dynamic> json)
       : what = json['what'],
         date = (json['date'] as Timestamp).toDate(),
-        value = json['value'];
+        value = json['value'],
+        isDaily = json['isDaily'];
 }
 
 Stream<List<Todo>> userTodoSnapshots(String user) {
@@ -25,11 +27,14 @@ Stream<List<Todo>> userTodoSnapshots(String user) {
   });
 }
 
-void addTodo(String user, String what, int value) {
+void addTodo(String user, String what, int value, bool isDaily) {
   final db = FirebaseFirestore.instance;
-  db
-      .collection("/Users/$user/todos")
-      .add({'what': what, 'date': Timestamp.now(), 'value': value});
+  db.collection("/Users/$user/todos").add({
+    'what': what,
+    'date': Timestamp.now(),
+    'value': value,
+    'isDaily': isDaily
+  });
 }
 
 void deleteTodo(String user, String docId) {
@@ -42,6 +47,7 @@ void undeleteTodo(String user, Todo todo) {
   db.doc("/Users/$user/todos/${todo.id}").set({
     'what': todo.what,
     'date': Timestamp.fromDate(todo.date!),
-    'value': todo.value
+    'value': todo.value,
+    'isDaily': todo.isDaily
   });
 }

@@ -1,10 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:momentary_bliss/models/globals.dart';
-import 'package:momentary_bliss/models/todo.dart';
-import 'package:provider/provider.dart';
 
 class NotificationScreen extends StatelessWidget {
   final String user;
@@ -73,7 +68,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
             child: Row(
-              children: const[
+              children: const [
                 Text("Notifications",
                     style: TextStyle(
                         fontSize: 26,

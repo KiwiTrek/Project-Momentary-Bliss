@@ -66,13 +66,27 @@ class _UserScreenState extends State<UserScreen> {
             final doc = snapshot.data!;
             final data = doc.data()!;
             if (doc.data() != null) {
-              return ListTile(
-                leading: CircleAvatar(
-                  radius: 30.0,
-                  backgroundImage: NetworkImage(data["avatar"]),
-                ),
-                title: Text(widget.user.uid),
-                subtitle: Text(widget.user.email.toString()),
+              return Column(
+                children: [
+                  ListTile(
+                    leading: CircleAvatar(
+                      radius: 30.0,
+                      backgroundImage: NetworkImage(data["avatar"]),
+                    ),
+                    title: Text(widget.user.uid),
+                    subtitle: Text(widget.user.email.toString()),
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      IcoFontIcons.coins,
+                      size: 32,
+                      color: orange,
+                    ),
+                    title: const Text("Coins"),
+                    trailing: Text("${data["coins"]}",
+                        style: const TextStyle(fontSize: 32)),
+                  )
+                ],
               );
             } else {
               return const ListTile(
