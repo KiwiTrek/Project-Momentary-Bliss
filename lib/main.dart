@@ -6,7 +6,7 @@ import 'package:momentary_bliss/screens/auth_gate.dart';
 import 'package:momentary_bliss/screens/friends_list_screen.dart';
 import 'package:momentary_bliss/screens/notifications_screen.dart';
 import 'package:momentary_bliss/screens/rewards_list_screen.dart';
-import 'package:momentary_bliss/screens/todos_list_screen.dart';
+import 'package:momentary_bliss/screens/quests_list_screen.dart';
 import 'package:momentary_bliss/screens/user_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       home: PersistentTabView(
         context,
         screens: [
-          TodoListScreen(userMail: user.email.toString()),
+          QuestListScreen(userMail: user.email.toString()),
           RewardListScreen(userMail: user.email.toString()),
           FriendListScreen(userMail: user.email.toString()),
           NotificationScreen(userMail: user.email.toString()),
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(userMail: user.email.toString()),
+                    QuestListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
                     RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(userMail: user.email.toString()),
+                    QuestListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
                     RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(userMail: user.email.toString()),
+                    QuestListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
                     RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
@@ -109,7 +109,7 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(userMail: user.email.toString()),
+                    QuestListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
                     RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
@@ -129,7 +129,7 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(userMail: user.email.toString()),
+                    QuestListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
                     RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>

@@ -7,19 +7,19 @@ import 'package:momentary_bliss/models/quest.dart';
 import 'package:momentary_bliss/models/reward.dart';
 import 'package:provider/provider.dart';
 
-class TodoListScreen extends StatefulWidget {
+class QuestListScreen extends StatefulWidget {
   final String userMail;
 
-  const TodoListScreen({
+  const QuestListScreen({
     Key? key,
     required this.userMail,
   }) : super(key: key);
 
   @override
-  State<TodoListScreen> createState() => _TodoListScreenState();
+  State<QuestListScreen> createState() => _QuestListScreenState();
 }
 
-class _TodoListScreenState extends State<TodoListScreen> {
+class _QuestListScreenState extends State<QuestListScreen> {
   //Probably should move this to main or something idk
   void initialCreationFlow() async {
     final userRef = FirebaseFirestore.instance.doc("/Users/${widget.userMail}");
