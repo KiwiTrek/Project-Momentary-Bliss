@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/globals.dart';
 
 class NotificationScreen extends StatelessWidget {
-  final String user;
+  final String userMail;
 
   const NotificationScreen({
     Key? key,
-    required this.user,
+    required this.userMail,
   }) : super(key: key);
 
   @override
@@ -34,14 +34,14 @@ class NotificationScreen extends StatelessWidget {
     //     },
     //   ),
     // );
-    return _Screen(user);
+    return _Screen(userMail);
   }
 }
 
 class _Screen extends StatefulWidget {
   // final List<Friends> friends;
-  final String user;
-  const _Screen(this.user);
+  final String userMail;
+  const _Screen(this.userMail);
 
   @override
   _ScreenState createState() => _ScreenState();
@@ -66,7 +66,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
           decoration: const BoxDecoration(color: green),
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 23.0),
             child: Row(
               children: const [
                 Text("Notifications",
@@ -85,6 +85,8 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
           color: lightGreen,
         ),
         // #### THE LIST ####
+        // Imitate "Friend list" structure
+
         // Expanded(
         //   child: ListView.separated(itemBuilder: itemBuilder, separatorBuilder: separatorBuilder, itemCount: itemCount),
         // ),

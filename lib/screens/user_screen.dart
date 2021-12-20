@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:momentary_bliss/models/globals.dart';
-import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
   final User user;

@@ -3,24 +3,51 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:momentary_bliss/models/globals.dart';
-import 'package:momentary_bliss/models/todo.dart';
+import 'package:momentary_bliss/models/quest.dart';
+import 'package:momentary_bliss/models/reward.dart';
 import 'package:provider/provider.dart';
 
-class TodoListScreen extends StatelessWidget {
-  final String user;
+class TodoListScreen extends StatefulWidget {
+  final String userMail;
 
   const TodoListScreen({
     Key? key,
-    required this.user,
+    required this.userMail,
   }) : super(key: key);
+
+  @override
+  State<TodoListScreen> createState() => _TodoListScreenState();
+}
+
+class _TodoListScreenState extends State<TodoListScreen> {
+  //Probably should move this to main or something idk
+  void initialCreationFlow() async {
+    final userRef = FirebaseFirestore.instance.doc("/Users/${widget.userMail}");
+    final userSnap = await userRef.get();
+    if (!userSnap.exists) {
+      userRef.set({
+        'avatar':
+            "https://cdn.icon-icons.com/icons2/2643/PNG/512/male_boy_person_people_avatar_icon_159358.png",
+        'coins': 0
+      });
+      addQuest(widget.userMail, "Create a quest", 5, false);
+      addReward(widget.userMail, "Get a cookie :)", 5);
+    }
+  }
+
+  @override
+  void initState() {
+    initialCreationFlow();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Provider.value(
-      value: user,
+      value: widget.userMail,
       builder: (context, _) => StreamBuilder(
-        stream: userTodoSnapshots(user),
-        builder: (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
+        stream: userTodoSnapshots(widget.userMail),
+        builder: (BuildContext context, AsyncSnapshot<List<Quest>> snapshot) {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error!);
           }
@@ -30,7 +57,7 @@ class TodoListScreen extends StatelessWidget {
                 body: Center(child: CircularProgressIndicator()),
               );
             case ConnectionState.active:
-              return _Screen(snapshot.data!, user);
+              return _Screen(snapshot.data!, widget.userMail);
             case ConnectionState.none:
               return ErrorWidget("The stream was wrong (connectionState.none)");
             case ConnectionState.done:
@@ -43,9 +70,9 @@ class TodoListScreen extends StatelessWidget {
 }
 
 class _Screen extends StatefulWidget {
-  final List<Todo> todos;
-  final String user;
-  const _Screen(this.todos, this.user);
+  final List<Quest> quests;
+  final String userMail;
+  const _Screen(this.quests, this.userMail);
 
   @override
   _ScreenState createState() => _ScreenState();
@@ -84,15 +111,15 @@ class _ScreenState extends State<_Screen> {
     });
   }
 
-  void deleteWithUndo(BuildContext context, Todo todo) {
-    deleteTodo(context.read<String>(), todo.id);
+  void deleteWithUndo(BuildContext context, Quest todo) {
+    deleteQuest(context.read<String>(), todo.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("You deleted '${todo.what}'"),
         action: SnackBarAction(
           label: "UNDO",
           onPressed: () {
-            undeleteTodo(context.read<String>(), todo);
+            undeleteQuest(context.read<String>(), todo);
           },
         ),
       ),
@@ -120,7 +147,7 @@ class _ScreenState extends State<_Screen> {
                   padding: const EdgeInsets.all(8.0),
                   child: StreamBuilder(
                       stream: FirebaseFirestore.instance
-                          .doc("/Users/${widget.user}")
+                          .doc("/Users/${widget.userMail}")
                           .snapshots(),
                       builder: (
                         BuildContext context,
@@ -168,58 +195,61 @@ class _ScreenState extends State<_Screen> {
         ),
         Expanded(
           child: ListView.separated(
-            itemCount: widget.todos.length,
+            itemCount: widget.quests.length,
             itemBuilder: (context, index) {
-              final todo = widget.todos[index];
+              final quest = widget.quests[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: darkPurple),
-                      borderRadius: BorderRadius.circular(8.0)),
-                  child: ListTile(
-                    title: Text(
-                      todo.what,
-                    ),
-                    subtitle: todo.isDaily ? const Text("Daily Quest") : null,
-                    trailing: SizedBox(
-                      width: 105,
-                      child: Row(
-                        children: [
-                          const Icon(
-                            IcoFontIcons.coins,
-                            size: 32,
-                            color: orange,
-                          ),
-                          const SizedBox(width: 2),
-                          Text("${todo.value}",
-                              style: const TextStyle(fontSize: 32)),
-                        ],
-                        mainAxisAlignment: MainAxisAlignment.end,
+                child: Dismissible(
+                  key: Key(quest.id),
+                  onDismissed: (direction) {
+                    deleteWithUndo(context, quest);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: darkPurple),
+                        borderRadius: BorderRadius.circular(8.0)),
+                    child: ListTile(
+                      title: Text(
+                        quest.what,
                       ),
-                    ),
-                    leading: IconButton(
-                      icon: const Icon(
-                        Icons.check,
-                        color: purple,
+                      subtitle:
+                          quest.isDaily ? const Text("Daily Quest") : null,
+                      trailing: SizedBox(
+                        width: 105,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              IcoFontIcons.coins,
+                              size: 32,
+                              color: orange,
+                            ),
+                            const SizedBox(width: 2),
+                            Text("${quest.value}",
+                                style: const TextStyle(fontSize: 32)),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.end,
+                        ),
                       ),
-                      onPressed: () {
-                        if (todo.isDaily == false) {
-                          deleteTodo(context.read<String>(), todo.id);
+                      leading: IconButton(
+                        icon: const Icon(
+                          Icons.check,
+                          color: purple,
+                        ),
+                        onPressed: () {
+                          if (quest.isDaily == false) {
+                            deleteQuest(context.read<String>(), quest.id);
+                          }
+                          updateCoins(widget.userMail, quest.value);
+                        },
+                      ),
+                      onTap: () {
+                        if (quest.isDaily == false) {
+                          deleteQuest(context.read<String>(), quest.id);
                         }
-                        updateCoins(widget.user, todo.value);
+                        updateCoins(widget.userMail, quest.value);
                       },
                     ),
-                    onTap: () {
-                      if (todo.isDaily == false) {
-                        deleteTodo(context.read<String>(), todo.id);
-                      }
-                      updateCoins(widget.user, todo.value);
-                    },
-                    //Add dash for trashcan to appear
-                    onLongPress: () {
-                      deleteWithUndo(context, todo);
-                    },
                   ),
                 ),
               );
@@ -288,7 +318,7 @@ class _ScreenState extends State<_Screen> {
                         valueController.text.isNotEmpty) {
                       int value = int.parse(valueController.text);
                       if (value >= 999) value = 999;
-                      addTodo(context.read<String>(), whatController.text,
+                      addQuest(context.read<String>(), whatController.text,
                           value, isDaily);
                       whatController.clear();
                       valueController.clear();

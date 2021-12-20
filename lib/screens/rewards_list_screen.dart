@@ -7,19 +7,19 @@ import 'package:momentary_bliss/models/reward.dart';
 import 'package:provider/provider.dart';
 
 class RewardListScreen extends StatelessWidget {
-  final String user;
+  final String userMail;
 
   const RewardListScreen({
     Key? key,
-    required this.user,
+    required this.userMail,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Provider.value(
-      value: user,
+      value: userMail,
       builder: (context, _) => StreamBuilder(
-        stream: userRewardSnapshots(user),
+        stream: userRewardSnapshots(userMail),
         builder: (BuildContext context, AsyncSnapshot<List<Reward>> snapshot) {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error!);
@@ -30,7 +30,7 @@ class RewardListScreen extends StatelessWidget {
                 body: Center(child: CircularProgressIndicator()),
               );
             case ConnectionState.active:
-              return _Screen(snapshot.data!, user);
+              return _Screen(snapshot.data!, userMail);
             case ConnectionState.none:
               return ErrorWidget("The stream was wrong (connectionState.none)");
             case ConnectionState.done:
@@ -44,8 +44,8 @@ class RewardListScreen extends StatelessWidget {
 
 class _Screen extends StatefulWidget {
   final List<Reward> rewards;
-  final String user;
-  const _Screen(this.rewards, this.user);
+  final String userMail;
+  const _Screen(this.rewards, this.userMail);
 
   @override
   _ScreenState createState() => _ScreenState();
@@ -117,7 +117,7 @@ class _ScreenState extends State<_Screen> {
                   padding: const EdgeInsets.all(8.0),
                   child: StreamBuilder(
                       stream: FirebaseFirestore.instance
-                          .doc("/Users/${widget.user}")
+                          .doc("/Users/${widget.userMail}")
                           .snapshots(),
                       builder: (
                         BuildContext context,
@@ -170,46 +170,48 @@ class _ScreenState extends State<_Screen> {
               final reward = widget.rewards[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.orange),
-                      borderRadius: BorderRadius.circular(8.0)),
-                  child: ListTile(
-                    title: Text(
-                      reward.what,
-                    ),
-                    trailing: SizedBox(
-                      width: 105,
-                      child: Row(
-                        children: [
-                          const Icon(
-                            IcoFontIcons.coins,
-                            size: 32,
-                            color: orange,
-                          ),
-                          const SizedBox(width: 2),
-                          Text("-${reward.value}",
-                              style: const TextStyle(fontSize: 32)),
-                        ],
-                        mainAxisAlignment: MainAxisAlignment.end,
+                child: Dismissible(
+                  key: Key(reward.id),
+                  onDismissed: (direction) {
+                    deleteWithUndo(context, reward);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.orange),
+                        borderRadius: BorderRadius.circular(8.0)),
+                    child: ListTile(
+                      title: Text(
+                        reward.what,
                       ),
-                    ),
-                    leading: IconButton(
-                      icon: const Icon(
-                        Icons.check,
-                        color: Colors.amber,
+                      trailing: SizedBox(
+                        width: 105,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              IcoFontIcons.coins,
+                              size: 32,
+                              color: orange,
+                            ),
+                            const SizedBox(width: 2),
+                            Text("-${reward.value}",
+                                style: const TextStyle(fontSize: 32)),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.end,
+                        ),
                       ),
-                      onPressed: () {
-                        updateCoins(widget.user, reward.value);
+                      leading: IconButton(
+                        icon: const Icon(
+                          Icons.check,
+                          color: Colors.amber,
+                        ),
+                        onPressed: () {
+                          updateCoins(widget.userMail, reward.value);
+                        },
+                      ),
+                      onTap: () {
+                        updateCoins(widget.userMail, reward.value);
                       },
                     ),
-                    onTap: () {
-                      updateCoins(widget.user, reward.value);
-                    },
-                    //Add dash for trashcan to appear
-                    onLongPress: () {
-                      deleteWithUndo(context, reward);
-                    },
                   ),
                 ),
               );

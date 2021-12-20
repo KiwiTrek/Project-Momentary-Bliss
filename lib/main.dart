@@ -33,10 +33,10 @@ class MyApp extends StatelessWidget {
       home: PersistentTabView(
         context,
         screens: [
-          TodoListScreen(user: user.email.toString()),
-          RewardListScreen(user: user.email.toString()),
-          FriendListScreen(user: user.email.toString()),
-          NotificationScreen(user: user.email.toString()),
+          TodoListScreen(userMail: user.email.toString()),
+          RewardListScreen(userMail: user.email.toString()),
+          FriendListScreen(userMail: user.email.toString()),
+          NotificationScreen(userMail: user.email.toString()),
           UserScreen(user: user)
         ],
         items: [
@@ -49,14 +49,14 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(user: user.email.toString()),
+                    TodoListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
-                    RewardListScreen(user: user.email.toString()),
+                    RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString()),
+                    FriendListScreen(userMail: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
                 '/notifications': (context) =>
-                    NotificationScreen(user: user.email.toString()),
+                    NotificationScreen(userMail: user.email.toString()),
               },
             ),
           ),
@@ -69,14 +69,14 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(user: user.email.toString()),
+                    TodoListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
-                    RewardListScreen(user: user.email.toString()),
+                    RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString()),
+                    FriendListScreen(userMail: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
                 '/notifications': (context) =>
-                    NotificationScreen(user: user.email.toString()),
+                    NotificationScreen(userMail: user.email.toString()),
               },
             ),
           ),
@@ -89,14 +89,14 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(user: user.email.toString()),
+                    TodoListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
-                    RewardListScreen(user: user.email.toString()),
+                    RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString()),
+                    FriendListScreen(userMail: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
                 '/notifications': (context) =>
-                    NotificationScreen(user: user.email.toString()),
+                    NotificationScreen(userMail: user.email.toString()),
               },
             ),
           ),
@@ -109,14 +109,14 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(user: user.email.toString()),
+                    TodoListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
-                    RewardListScreen(user: user.email.toString()),
+                    RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString()),
+                    FriendListScreen(userMail: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
                 '/notifications': (context) =>
-                    NotificationScreen(user: user.email.toString()),
+                    NotificationScreen(userMail: user.email.toString()),
               },
             ),
           ),
@@ -129,14 +129,14 @@ class MyApp extends StatelessWidget {
               initialRoute: '/quest',
               routes: {
                 '/quest': (context) =>
-                    TodoListScreen(user: user.email.toString()),
+                    TodoListScreen(userMail: user.email.toString()),
                 '/reward': (context) =>
-                    RewardListScreen(user: user.email.toString()),
+                    RewardListScreen(userMail: user.email.toString()),
                 '/friends': (context) =>
-                    FriendListScreen(user: user.email.toString()),
+                    FriendListScreen(userMail: user.email.toString()),
                 '/user': (context) => UserScreen(user: user),
                 '/notifications': (context) =>
-                    NotificationScreen(user: user.email.toString()),
+                    NotificationScreen(userMail: user.email.toString()),
               },
             ),
           ),
