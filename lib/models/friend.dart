@@ -25,11 +25,25 @@ Stream<List<Friend>> userFriendSnapshots(String user) {
   });
 }
 
+Stream<List<Friend>> findFriends(String mail) {
+  final db = FirebaseFirestore.instance;
+  final stream = db.collection("/Users/").orderBy("uid").snapshots();
+  return stream.map((query) {
+    List<Friend> friends = [];
+    for (final doc in query.docs) {
+      if (doc.data()['mail'] == mail) {
+        friends.add(Friend.fromFirestore(doc.id, doc.data()));
+      }
+    }
+    return friends;
+  });
+}
+
 void addFriend(String user, Friend friend) {
   final db = FirebaseFirestore.instance;
   db
       .collection("/Users/$user/friends")
-      .add({'avatar': friend.avatar, 'uid' : friend.uid, 'mail': friend.mail});
+      .add({'avatar': friend.avatar, 'uid': friend.uid, 'mail': friend.mail});
 }
 
 void deleteFriend(String user, String docId) {
@@ -39,9 +53,7 @@ void deleteFriend(String user, String docId) {
 
 void undeleteFriend(String user, Friend friend) {
   final db = FirebaseFirestore.instance;
-  db.doc("/Users/$user/friends/${friend.id}").set({
-    'avatar': friend.avatar,
-    'mail': friend.mail,
-    'uid' : friend.uid
-  });
+  db
+      .doc("/Users/$user/friends/${friend.id}")
+      .set({'avatar': friend.avatar, 'mail': friend.mail, 'uid': friend.uid});
 }

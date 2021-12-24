@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:momentary_bliss/models/quest.dart';
+import 'package:momentary_bliss/models/reward.dart';
 import 'package:momentary_bliss/screens/auth_gate.dart';
 import 'package:momentary_bliss/screens/friends_list_screen.dart';
 import 'package:momentary_bliss/screens/notifications_screen.dart';
@@ -22,10 +25,27 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  void initialCreationFlow(User user) async {
+    final userRef = FirebaseFirestore.instance.doc("/Users/${user.email}");
+    final userSnap = await userRef.get();
+    if (!userSnap.exists) {
+      userRef.set({
+        'avatar':
+            "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
+        'coins': 0,
+        'uid': user.uid,
+        'mail': user.email
+      });
+      addQuest(user.email!, "Create a quest", 5, false);
+      addReward(user.email!, "Get a cookie :)", 5);
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
+    initialCreationFlow(user);
     return MaterialApp(
       title: 'Bentleys of Doom App',
       theme: ThemeData(primarySwatch: Colors.blueGrey),
@@ -103,7 +123,7 @@ class MyApp extends StatelessWidget {
           PersistentBottomNavBarItem(
             icon: const Icon(Icons.notifications),
             title: ("Notifications"),
-            activeColorPrimary: Colors.green,
+            activeColorPrimary: Colors.amber,
             inactiveColorPrimary: Colors.grey,
             routeAndNavigatorSettings: RouteAndNavigatorSettings(
               initialRoute: '/quest',

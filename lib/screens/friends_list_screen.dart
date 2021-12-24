@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/friend.dart';
 import 'package:momentary_bliss/models/globals.dart';
+import 'package:momentary_bliss/screens/add_friend.dart';
 import 'package:provider/provider.dart';
 
 class FriendListScreen extends StatelessWidget {
@@ -59,6 +60,21 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  void deleteWithUndo(BuildContext context, Friend friend) {
+    deleteFriend(context.read<String>(), friend.id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("You unfriended '${friend.mail}'"),
+        action: SnackBarAction(
+          label: "UNDO",
+          onPressed: () {
+            undeleteFriend(context.read<String>(), friend);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -77,7 +93,13 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                         color: Colors.white)),
                 const Expanded(child: SizedBox()),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const FriendResultsScreen(),
+                      ),
+                    );
+                  },
                   icon: const Icon(
                     Icons.person_add,
                     color: Colors.white,
@@ -100,19 +122,25 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                   itemCount: widget.friends.length,
                   itemBuilder: (context, index) {
                     final friend = widget.friends[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(8.0)),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            radius: 30.0,
-                            backgroundImage: NetworkImage(friend.avatar),
+                    return Dismissible(
+                      key: Key(friend.id),
+                      onDismissed: (direction) {
+                        deleteWithUndo(context, friend);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.green),
+                              borderRadius: BorderRadius.circular(8.0)),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 30.0,
+                              backgroundImage: NetworkImage(friend.avatar),
+                            ),
+                            title: Text(friend.uid),
+                            subtitle: Text(friend.mail),
                           ),
-                          title: Text(friend.uid),
-                          subtitle: Text(friend.mail),
                         ),
                       ),
                     );

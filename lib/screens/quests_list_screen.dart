@@ -20,24 +20,8 @@ class QuestListScreen extends StatefulWidget {
 }
 
 class _QuestListScreenState extends State<QuestListScreen> {
-  //Probably should move this to main or something idk
-  void initialCreationFlow() async {
-    final userRef = FirebaseFirestore.instance.doc("/Users/${widget.userMail}");
-    final userSnap = await userRef.get();
-    if (!userSnap.exists) {
-      userRef.set({
-        'avatar':
-            "https://cdn.icon-icons.com/icons2/2643/PNG/512/male_boy_person_people_avatar_icon_159358.png",
-        'coins': 0
-      });
-      addQuest(widget.userMail, "Create a quest", 5, false);
-      addReward(widget.userMail, "Get a cookie :)", 5);
-    }
-  }
-
   @override
   void initState() {
-    initialCreationFlow();
     super.initState();
   }
 

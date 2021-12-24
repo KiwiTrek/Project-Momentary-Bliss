@@ -63,7 +63,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
     return Column(
       children: [
         Container(
-          decoration: const BoxDecoration(color: green),
+          decoration: const BoxDecoration(color: Colors.yellow),
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 23.0),
@@ -82,7 +82,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
         const Divider(
           height: 0,
           thickness: 2,
-          color: lightGreen,
+          color: Colors.amberAccent,
         ),
         // #### THE LIST ####
         // Imitate "Friend list" structure
@@ -94,7 +94,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
           child: Center(
             child: Text(
               "You got no notifications :)",
-              style: TextStyle(color: Colors.green, fontSize: 22),
+              style: TextStyle(color: Colors.amber, fontSize: 22),
             ),
           ),
         ),
