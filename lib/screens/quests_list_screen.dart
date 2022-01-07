@@ -30,7 +30,7 @@ class _QuestListScreenState extends State<QuestListScreen> {
     return Provider.value(
       value: widget.userMail,
       builder: (context, _) => StreamBuilder(
-        stream: userTodoSnapshots(widget.userMail),
+        stream: userQuestSnapshots(widget.userMail),
         builder: (BuildContext context, AsyncSnapshot<List<Quest>> snapshot) {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error!);

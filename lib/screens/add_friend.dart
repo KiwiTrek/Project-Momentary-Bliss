@@ -3,10 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/friend.dart';
 import 'package:momentary_bliss/models/globals.dart';
+import 'package:momentary_bliss/models/notification.dart';
 
 class FriendResultsScreen extends StatefulWidget {
+  final String userMail;
+
   const FriendResultsScreen({
     Key? key,
+    required this.userMail,
   }) : super(key: key);
 
   @override
@@ -51,7 +55,7 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
                   child: TextField(
                     controller: controller,
                     decoration: const InputDecoration(
-                      hintText: "Type the mail here",
+                      hintText: "Find your friends here!",
                     ),
                   ),
                 ),
@@ -59,7 +63,7 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
                     onPressed: () {
                       if (controller.text.isNotEmpty) {
                         setState(() {
-                          stream = findFriends(controller.text);
+                          stream = findFriendList(controller.text);
                           isNotEmpty = true;
                         });
                       } else {
@@ -101,19 +105,29 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
                               title: Text(friends[index].mail),
                               subtitle: Text(friends[index].uid),
                               onTap: () {
-                                setState(() {
-                                  // ## Send friend notification ##
-                                  addFriend(
-                                      FirebaseAuth.instance.currentUser!.email!,
-                                      friends[index]);
-                                  // ## Instead of this ^ ##
+                                if (friends[index].mail != widget.userMail) {
+                                  setState(() {
+                                    addNotification(
+                                      "${widget.userMail} has sent you a friend request!",
+                                      widget.userMail,
+                                      friends[index].mail,
+                                      0,
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            "Sent a friend request to ${friends[index].mail}!"),
+                                      ),
+                                    );
+                                  });
+                                } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text(
-                                          "Sent a friend request to ${friends[index].mail}!"),
+                                          "You can't add yourself as a friend! That's just sad!"),
                                     ),
                                   );
-                                });
+                                }
                               },
                             );
                           },

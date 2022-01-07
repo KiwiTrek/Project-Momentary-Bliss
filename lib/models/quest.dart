@@ -14,7 +14,7 @@ class Quest {
         isDaily = json['isDaily'];
 }
 
-Stream<List<Quest>> userTodoSnapshots(String user) {
+Stream<List<Quest>> userQuestSnapshots(String user) {
   final db = FirebaseFirestore.instance;
   final stream =
       db.collection("/Users/$user/quests").orderBy("date").snapshots();

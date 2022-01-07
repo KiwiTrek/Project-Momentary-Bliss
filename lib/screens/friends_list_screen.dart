@@ -96,7 +96,8 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => const FriendResultsScreen(),
+                        builder: (_) =>
+                            FriendResultsScreen(userMail: widget.userMail),
                       ),
                     );
                   },
