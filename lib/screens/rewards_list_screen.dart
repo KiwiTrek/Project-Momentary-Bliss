@@ -99,12 +99,13 @@ class _ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final systemBarHeight = MediaQuery.of(context).viewPadding.top;
     return Column(
       children: [
         Container(
           decoration: const BoxDecoration(color: Colors.orange),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+            padding: EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
             child: Row(
               children: [
                 const Text("Rewards",

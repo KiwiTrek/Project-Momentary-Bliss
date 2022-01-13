@@ -112,64 +112,63 @@ class _ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final systemBarHeight = MediaQuery.of(context).viewPadding.top;
     return Column(
       children: [
         Container(
+          padding:
+                EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
           decoration: const BoxDecoration(color: darkPurple),
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-            child: Row(
-              children: [
-                const Text("Quests",
-                    style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
-                const Expanded(child: SizedBox()),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .doc("/Users/${widget.userMail}")
-                          .snapshots(),
-                      builder: (
-                        BuildContext context,
-                        AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
-                            snapshot,
-                      ) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        final doc = snapshot.data!;
-                        final data = doc.data()!;
-                        if (doc.data() != null) {
-                          return Row(
-                            children: [
-                              const Icon(
-                                IcoFontIcons.moneyBag,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                              const SizedBox(width: 1),
-                              Text(data['coins'].toString(),
-                                  style: const TextStyle(
-                                      fontSize: 24, color: Colors.white))
-                            ],
-                          );
-                        } else {
-                          return Row(
-                            children: const [
-                              Icon(IcoFontIcons.moneyBag),
-                              Text("<undefined>"),
-                            ],
-                          );
-                        }
-                      }),
-                ),
-              ],
-            ),
+          child: Row(
+            children: [
+              const Text("Quests",
+                  style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+              const Expanded(child: SizedBox()),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .doc("/Users/${widget.userMail}")
+                        .snapshots(),
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                          snapshot,
+                    ) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                            child: CircularProgressIndicator());
+                      }
+                      final doc = snapshot.data!;
+                      final data = doc.data()!;
+                      if (doc.data() != null) {
+                        return Row(
+                          children: [
+                            const Icon(
+                              IcoFontIcons.moneyBag,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                            const SizedBox(width: 1),
+                            Text(data['coins'].toString(),
+                                style: const TextStyle(
+                                    fontSize: 24, color: Colors.white))
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          children: const [
+                            Icon(IcoFontIcons.moneyBag),
+                            Text("<undefined>"),
+                          ],
+                        );
+                      }
+                    }),
+              ),
+            ],
           ),
         ),
         const Divider(
@@ -245,7 +244,7 @@ class _ScreenState extends State<_Screen> {
             ),
           ),
         ),
-
+    
         // The "Add task part", should be on a separated screen
         Material(
           child: Padding(

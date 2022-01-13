@@ -15,6 +15,7 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
+    final systemBarHeight = MediaQuery.of(context).viewPadding.top;
     final stream = FirebaseFirestore.instance
         .doc("/Users/${widget.user.email}")
         .snapshots();
@@ -22,7 +23,7 @@ class _UserScreenState extends State<UserScreen> {
       Container(
         decoration: const BoxDecoration(color: Colors.blue),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          padding: EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
           child: Row(
             children: [
               const Text("My Profile",

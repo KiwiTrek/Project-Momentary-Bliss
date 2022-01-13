@@ -147,13 +147,14 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final systemBarHeight = MediaQuery.of(context).viewPadding.top;
     return Column(
       children: [
         Container(
           decoration: const BoxDecoration(color: Colors.yellow),
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 23.0),
+                EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
             child: Row(
               children: const [
                 Text("Notifications",
