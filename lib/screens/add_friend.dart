@@ -1,5 +1,3 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/friend.dart';
@@ -58,6 +56,18 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
                     decoration: const InputDecoration(
                       hintText: "Find your friends here!",
                     ),
+                    onEditingComplete: () {
+                      if (controller.text.isNotEmpty) {
+                        setState(() {
+                          stream = findFriendList(controller.text);
+                          isNotEmpty = true;
+                        });
+                      } else {
+                        setState(() {
+                          isNotEmpty = false;
+                        });
+                      }
+                    },
                   ),
                 ),
                 IconButton(
@@ -91,23 +101,49 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
                             child: CircularProgressIndicator(),
                           );
                         }
-                        List<Friend> friends = snapshot.data!;
+                        List<Friend> friendsFound = snapshot.data!;
                         return ListView.separated(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: friends.length,
+                          itemCount: friendsFound.length,
                           itemBuilder: (context, index) {
                             return ListTile(
-                              leading: CircleAvatar(
-                                radius: 30.0,
-                                backgroundImage:
-                                    NetworkImage(friends[index].avatar),
-                              ),
-                              title: Text(friends[index].mail),
-                              subtitle: Text(friends[index].uid),
-                              onTap: () {                                
-                              },
-                            );
+                                leading: CircleAvatar(
+                                  radius: 30.0,
+                                  backgroundImage:
+                                      NetworkImage(friendsFound[index].avatar),
+                                ),
+                                title: Text(friendsFound[index].mail),
+                                subtitle: Text(friendsFound[index].uid),
+                                onTap: () {
+                                  //TODO: Bug allows to add multiple friends
+                                  if (friendsFound[index].mail !=
+                                      widget.userMail) {
+                                    setState(() {
+                                      addNotification(
+                                          "${widget.userMail} has sent you a friend request!",
+                                          widget.userMail,
+                                          friendsFound[index].mail,
+                                          0,
+                                          "",
+                                          0);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "Sent a friend request to ${friendsFound[index].mail}!"),
+                                        ),
+                                      );
+                                    });
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            "You can't add yourself as a friend! That's just sad!"),
+                                      ),
+                                    );
+                                  }
+                                });
                           },
                           separatorBuilder: (BuildContext context, int index) =>
                               const Divider(

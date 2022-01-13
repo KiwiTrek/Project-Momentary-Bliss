@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/friend.dart';
@@ -93,11 +94,12 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                         deleteNotification(widget.userMail, notification.id);
                         addFriend(notification.from, widget.userMail);
                         addNotification(
-                         "${widget.userMail} has accepted your friend request",
-                         widget.userMail,
-                          notification.from,
-                         2);
-                        //TODO: Add notification to sender?
+                            "${widget.userMail} has accepted your friend request",
+                            widget.userMail,
+                            notification.from,
+                            2,
+                            "",
+                            0);
                       });
                     },
                     icon:
@@ -118,14 +120,26 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
           leading: const Icon(CommunityMaterialIcons.treasure_chest,
               size: 32, color: Colors.orange),
           title: Text(notification.what),
+          subtitle: Text(notification.extra),
           trailing: SizedBox(
-            width: 25,
+            width: 100,
             child: Row(
               children: [
                 IconButton(
                     onPressed: () {
                       setState(() {
-                        //Set State
+                        final db = FirebaseFirestore.instance;
+                        int current = 0;
+                        db.doc("/Users/${notification.from}").get().then((doc) {
+                          Map<String, dynamic> data = doc.data()!;
+                          current = data['coins'];
+                          current -= notification.reward;
+                          if (current <= 0) current = 0;
+                          db
+                              .doc("/Users/${notification.from}")
+                              .update({'coins': current});
+                          deleteWithUndo(context, notification);
+                        });
                       });
                     },
                     icon:
@@ -157,8 +171,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
         Container(
           decoration: const BoxDecoration(color: Colors.yellow),
           child: Padding(
-            padding:
-                EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
+            padding: EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
             child: Row(
               children: const [
                 Text("Notifications",

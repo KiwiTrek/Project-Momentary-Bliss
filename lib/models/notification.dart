@@ -11,13 +11,17 @@ enum NotificationType {
 class MyNotification {
   String id;
   String what;
+  int reward;
   DateTime? date;
   String from;
   String destination;
+  String extra;
   int type;
 
   MyNotification.fromFirestore(this.id, Map<String, dynamic> json)
       : what = json['what'],
+        extra = json['extra'],
+        reward = json['reward'],
         date = (json['date'] as Timestamp).toDate(),
         from = json['from'],
         destination = json['destination'],
@@ -37,10 +41,13 @@ Stream<List<MyNotification>> userNotificationSnapshots(String user) {
   });
 }
 
-void addNotification(String what, String from, String to, int type) {
+void addNotification(
+    String what, String from, String to, int type, String extra, int reward) {
   final db = FirebaseFirestore.instance;
   db.collection("/Users/$to/notifications").add({
     'what': what,
+    'extra': extra,
+    'reward': reward,
     'date': Timestamp.now(),
     'from': from,
     'destination': to,
@@ -57,6 +64,8 @@ void undeleteNotification(String user, MyNotification notification) {
   final db = FirebaseFirestore.instance;
   db.doc("/Users/$user/notifications/${notification.id}").set({
     'what': notification.what,
+    'extra': notification.extra,
+    'reward': notification.reward,
     'date': Timestamp.fromDate(notification.date!),
     'from': notification.from,
     'destination': notification.destination,

@@ -99,27 +99,24 @@ class _ScreenState extends State<_Screen> {
     );
   }
 
-  void sendNotification(String userId, int value, String what) {
+  bool sendNotification(String userId, int value, String what) {
     final db = FirebaseFirestore.instance;
     db.doc("/Users/$userId").get().then((doc) {
       Map<String, dynamic> data = doc.data()!;
       if (data["reward_checker"] == true) {
-        final stream =
-            db.collection("/Users/$userId/friends").orderBy("uid").snapshots();
-        stream.map((query){
-          for (final doc in query.docs) {
-            Friend current = Friend.fromFirestore(doc.id, doc.data());
-            addNotification(
-              "$userId has requested the reward '$what' of value '$value'", 
-              userId, 
-              current.mail, 
-              1);
-          }
-        });        
+        // final stream = userFriendSnapshots(widget.userMail);
+
+        //TODO: Change to send to all friends
+        String mail = "carloigle2001@gmail.com";
+        addNotification("$userId has requested a reward!", userId, mail, 1,
+            "$what: $value coins", value);
+        return true;
       } else {
         updateCoins(userId, value);
+        return false;
       }
     });
+    return false;
   }
 
   @override
@@ -231,11 +228,21 @@ class _ScreenState extends State<_Screen> {
                           color: Colors.amber,
                         ),
                         onPressed: () {
-                          sendNotification(widget.userMail, reward.value, reward.what);
+                          sendNotification(
+                              widget.userMail, reward.value, reward.what);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Sent reward to your friends!")),
+                          );
                         },
                       ),
                       onTap: () {
-                        sendNotification(widget.userMail, reward.value, reward.what);
+                        sendNotification(
+                            widget.userMail, reward.value, reward.what);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Sent reward to your friends!")),
+                        );
                       },
                     ),
                   ),
@@ -249,8 +256,6 @@ class _ScreenState extends State<_Screen> {
             ),
           ),
         ),
-
-        // The "Add task part", should be on a separated screen
         Material(
           elevation: 20,
           child: Padding(
