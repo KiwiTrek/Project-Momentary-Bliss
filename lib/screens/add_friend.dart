@@ -105,56 +105,7 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
                               ),
                               title: Text(friends[index].mail),
                               subtitle: Text(friends[index].uid),
-                              onTap: () {
-                                final db = FirebaseFirestore.instance;
-                                final doc = db
-                                    .collection(
-                                        "/Users/${widget.userMail}/friends")
-                                    .doc("/${friends[index].mail}");
-                                doc.get().then((snapShot) => {
-                                      if (!snapShot.exists)
-                                        {
-                                          if (friends[index].mail !=
-                                              widget.userMail)
-                                            {
-                                              setState(() {
-                                                addNotification(
-                                                  "${widget.userMail} has sent you a friend request!",
-                                                  widget.userMail,
-                                                  friends[index].mail,
-                                                  0,
-                                                );
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        "Sent a friend request to ${friends[index].mail}!"),
-                                                  ),
-                                                );
-                                              })
-                                            }
-                                          else
-                                            {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      "You can't add yourself as a friend! That's just sad!"),
-                                                ),
-                                              )
-                                            }
-                                        }
-                                      else
-                                        {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                  "You already addded this friend"),
-                                            ),
-                                          )
-                                        }
-                                    });
+                              onTap: () {                                
                               },
                             );
                           },
