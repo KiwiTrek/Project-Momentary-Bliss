@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:momentary_bliss/models/globals.dart';
-import 'package:momentary_bliss/models/notification.dart';
 import 'package:momentary_bliss/models/friend.dart';
+import 'package:momentary_bliss/models/notification.dart';
 import 'package:provider/provider.dart';
 
 class NotificationScreen extends StatelessWidget {
@@ -93,6 +91,12 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                       setState(() {
                         addFriend(widget.userMail, notification.from);
                         deleteNotification(widget.userMail, notification.id);
+                        addFriend(notification.from, widget.userMail);
+                        addNotification(
+                         "${widget.userMail} has accepted your friend request",
+                         widget.userMail,
+                          notification.from,
+                         2);
                         //TODO: Add notification to sender?
                       });
                     },

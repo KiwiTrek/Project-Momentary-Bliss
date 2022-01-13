@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icofont_flutter/icofont_flutter.dart';
+import 'package:momentary_bliss/models/friend.dart';
 import 'package:momentary_bliss/models/globals.dart';
+import 'package:momentary_bliss/models/notification.dart';
 import 'package:momentary_bliss/models/reward.dart';
 import 'package:provider/provider.dart';
 
@@ -95,6 +97,29 @@ class _ScreenState extends State<_Screen> {
         ),
       ),
     );
+  }
+
+  void sendNotification(String userId, int value, String what) {
+    final db = FirebaseFirestore.instance;
+    db.doc("/Users/$userId").get().then((doc) {
+      Map<String, dynamic> data = doc.data()!;
+      if (data["reward_checker"] == true) {
+        final stream =
+            db.collection("/Users/$userId/friends").orderBy("uid").snapshots();
+        stream.map((query){
+          for (final doc in query.docs) {
+            Friend current = Friend.fromFirestore(doc.id, doc.data());
+            addNotification(
+              "$userId has requested the reward '$what' of value '$value'", 
+              userId, 
+              current.mail, 
+              1);
+          }
+        });        
+      } else {
+        updateCoins(userId, value);
+      }
+    });
   }
 
   @override
@@ -206,11 +231,11 @@ class _ScreenState extends State<_Screen> {
                           color: Colors.amber,
                         ),
                         onPressed: () {
-                          updateCoins(widget.userMail, reward.value);
+                          sendNotification(widget.userMail, reward.value, reward.what);
                         },
                       ),
                       onTap: () {
-                        updateCoins(widget.userMail, reward.value);
+                        sendNotification(widget.userMail, reward.value, reward.what);
                       },
                     ),
                   ),

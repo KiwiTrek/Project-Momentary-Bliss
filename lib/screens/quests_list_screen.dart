@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:momentary_bliss/models/globals.dart';
 import 'package:momentary_bliss/models/quest.dart';
-import 'package:momentary_bliss/models/reward.dart';
 import 'package:provider/provider.dart';
 
 class QuestListScreen extends StatefulWidget {

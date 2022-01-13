@@ -1,5 +1,6 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/friend.dart';
 import 'package:momentary_bliss/models/globals.dart';
@@ -105,29 +106,55 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
                               title: Text(friends[index].mail),
                               subtitle: Text(friends[index].uid),
                               onTap: () {
-                                if (friends[index].mail != widget.userMail) {
-                                  setState(() {
-                                    addNotification(
-                                      "${widget.userMail} has sent you a friend request!",
-                                      widget.userMail,
-                                      friends[index].mail,
-                                      0,
-                                    );
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                            "Sent a friend request to ${friends[index].mail}!"),
-                                      ),
-                                    );
-                                  });
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          "You can't add yourself as a friend! That's just sad!"),
-                                    ),
-                                  );
-                                }
+                                final db = FirebaseFirestore.instance;
+                                final doc = db
+                                    .collection(
+                                        "/Users/${widget.userMail}/friends")
+                                    .doc("/${friends[index].mail}");
+                                doc.get().then((snapShot) => {
+                                      if (!snapShot.exists)
+                                        {
+                                          if (friends[index].mail !=
+                                              widget.userMail)
+                                            {
+                                              setState(() {
+                                                addNotification(
+                                                  "${widget.userMail} has sent you a friend request!",
+                                                  widget.userMail,
+                                                  friends[index].mail,
+                                                  0,
+                                                );
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        "Sent a friend request to ${friends[index].mail}!"),
+                                                  ),
+                                                );
+                                              })
+                                            }
+                                          else
+                                            {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      "You can't add yourself as a friend! That's just sad!"),
+                                                ),
+                                              )
+                                            }
+                                        }
+                                      else
+                                        {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  "You already addded this friend"),
+                                            ),
+                                          )
+                                        }
+                                    });
                               },
                             );
                           },

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icofont_flutter/icofont_flutter.dart';
@@ -13,6 +14,11 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
+  void changeState(bool value)
+  {
+    final db = FirebaseFirestore.instance;
+  db.doc("/Users/${widget.user.email}").update({"reward_checker" : value});
+  }
   @override
   Widget build(BuildContext context) {
     final systemBarHeight = MediaQuery.of(context).viewPadding.top;
@@ -82,9 +88,22 @@ class _UserScreenState extends State<UserScreen> {
                       color: orange,
                     ),
                     title: const Text("Coins"),
-                    trailing: Text("${data["coins"]}",
-                        style: const TextStyle(fontSize: 32)),
-                  )
+                    trailing: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      child: Text("${data["coins"]}",
+                          style: const TextStyle(fontSize: 32)),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      CommunityMaterialIcons.treasure_chest,
+                      size: 32,
+                      color: Colors.deepOrange,
+                    ),
+                    title: const Text("Enable friend approval"),
+                    subtitle: const Text("Allow friends to choose for your rewards", style: TextStyle(fontSize: 13),),
+                    trailing: Switch(value: data['reward_checker'], onChanged: changeState, activeColor: Colors.blue, inactiveThumbColor: Colors.grey[600],),
+                  ),
                 ],
               );
             } else {
