@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/friend.dart';
@@ -31,6 +32,52 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void checkFriend(Friend friend) {
+    final db = FirebaseFirestore.instance;
+    db.collection("/Users/${widget.userMail}/friends/").get().then((snapshot) {
+      List<Friend> friends = [];
+      for (final doc in snapshot.docs) {
+        friends.add(Friend.fromFirestore(doc.id, doc.data()));
+      }
+      bool check = false;
+      for (final currentFriend in friends) {
+        if (friend.mail == currentFriend.mail) {
+          check = true;
+          break;
+        }
+      }
+      if (!check) {
+        if (friend.mail != widget.userMail) {
+          addNotification("${widget.userMail} has sent you a friend request!",
+              widget.userMail, friend.mail, 0, "", 0);
+          SnackBar snack = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.symmetric(vertical: 55, horizontal: 12),
+            content: Text("Sent a friend request to ${friend.mail}!"),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snack);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.symmetric(vertical: 55, horizontal: 12),
+              content:
+                  Text("You can't add yourself as a friend! That's just sad!"),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.symmetric(vertical: 55, horizontal: 12),
+            content: Text("You already have this user as a friend"),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -89,73 +136,53 @@ class _FriendResultsScreenState extends State<FriendResultsScreen> {
           ),
           const Divider(),
           Padding(
-            padding: const EdgeInsets.all(1.0),
-            child: isNotEmpty
-                ? Expanded(
-                    child: StreamBuilder(
-                      stream: stream,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<Friend>> snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        List<Friend> friendsFound = snapshot.data!;
-                        return ListView.separated(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: friendsFound.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                                leading: CircleAvatar(
-                                  radius: 30.0,
-                                  backgroundImage:
-                                      NetworkImage(friendsFound[index].avatar),
-                                ),
-                                title: Text(friendsFound[index].mail),
-                                subtitle: Text(friendsFound[index].uid),
-                                onTap: () {
-                                  //TODO: Bug allows to add multiple friends
-                                  if (friendsFound[index].mail !=
-                                      widget.userMail) {
+              padding: const EdgeInsets.all(1.0),
+              child: isNotEmpty
+                  ? Expanded(
+                      child: StreamBuilder(
+                        stream: stream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<Friend>> snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: Text(
+                                "No users found.",
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 22),
+                              ),
+                            );
+                          }
+                          List<Friend> friendsFound = snapshot.data!;
+                          return ListView.separated(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: friendsFound.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                  leading: CircleAvatar(
+                                    radius: 30.0,
+                                    backgroundImage: NetworkImage(
+                                        friendsFound[index].avatar),
+                                  ),
+                                  title: Text(friendsFound[index].mail),
+                                  subtitle: Text(friendsFound[index].uid),
+                                  onTap: () {
                                     setState(() {
-                                      addNotification(
-                                          "${widget.userMail} has sent you a friend request!",
-                                          widget.userMail,
-                                          friendsFound[index].mail,
-                                          0,
-                                          "",
-                                          0);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                              "Sent a friend request to ${friendsFound[index].mail}!"),
-                                        ),
-                                      );
+                                      checkFriend(friendsFound[index]);
                                     });
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            "You can't add yourself as a friend! That's just sad!"),
-                                      ),
-                                    );
-                                  }
-                                });
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(
-                            thickness: 1,
-                            color: green,
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : null,
-          ),
+                                  });
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const Divider(
+                              thickness: 1,
+                              color: green,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : null),
         ],
       ),
     );

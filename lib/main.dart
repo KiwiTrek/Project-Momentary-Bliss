@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
         'coins': 0,
         'uid': user.uid,
         'mail': user.email,
-        'reward_checker' : true
+        'reward_checker': true,
+        'selected_friend': "null"
       });
       addQuest(user.email!, "Create a quest", 5, false);
       addReward(user.email!, "Get a cookie :)", 5);
@@ -51,117 +52,119 @@ class MyApp extends StatelessWidget {
       title: 'Bentleys of Doom App',
       theme: ThemeData(primarySwatch: Colors.blueGrey),
       debugShowCheckedModeBanner: false,
-      home: PersistentTabView(
-        context,
-        screens: [
-          QuestListScreen(userMail: user.email.toString()),
-          RewardListScreen(userMail: user.email.toString()),
-          FriendListScreen(userMail: user.email.toString()),
-          NotificationScreen(userMail: user.email.toString()),
-          UserScreen(user: user)
-        ],
-        items: [
-          PersistentBottomNavBarItem(
-            icon: const Icon(Icons.task),
-            title: ("Quests"),
-            activeColorPrimary: Colors.purple,
-            inactiveColorPrimary: Colors.grey,
-            routeAndNavigatorSettings: RouteAndNavigatorSettings(
-              initialRoute: '/quest',
-              routes: {
-                '/quest': (context) =>
-                    QuestListScreen(userMail: user.email.toString()),
-                '/reward': (context) =>
-                    RewardListScreen(userMail: user.email.toString()),
-                '/friends': (context) =>
-                    FriendListScreen(userMail: user.email.toString()),
-                '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) =>
-                    NotificationScreen(userMail: user.email.toString()),
-              },
+      home: Scaffold(
+        body: PersistentTabView(
+          context,
+          screens: [
+            QuestListScreen(userMail: user.email.toString()),
+            RewardListScreen(userMail: user.email.toString()),
+            FriendListScreen(userMail: user.email.toString()),
+            NotificationScreen(userMail: user.email.toString()),
+            UserScreen(user: user)
+          ],
+          items: [
+            PersistentBottomNavBarItem(
+              icon: const Icon(Icons.task),
+              title: ("Quests"),
+              activeColorPrimary: Colors.purple,
+              inactiveColorPrimary: Colors.grey,
+              routeAndNavigatorSettings: RouteAndNavigatorSettings(
+                initialRoute: '/quest',
+                routes: {
+                  '/quest': (context) =>
+                      QuestListScreen(userMail: user.email.toString()),
+                  '/reward': (context) =>
+                      RewardListScreen(userMail: user.email.toString()),
+                  '/friends': (context) =>
+                      FriendListScreen(userMail: user.email.toString()),
+                  '/user': (context) => UserScreen(user: user),
+                  '/notifications': (context) =>
+                      NotificationScreen(userMail: user.email.toString()),
+                },
+              ),
             ),
-          ),
-          PersistentBottomNavBarItem(
-            icon: const Icon(CommunityMaterialIcons.treasure_chest),
-            title: ("Rewards"),
-            activeColorPrimary: Colors.deepOrange,
-            inactiveColorPrimary: Colors.grey,
-            routeAndNavigatorSettings: RouteAndNavigatorSettings(
-              initialRoute: '/quest',
-              routes: {
-                '/quest': (context) =>
-                    QuestListScreen(userMail: user.email.toString()),
-                '/reward': (context) =>
-                    RewardListScreen(userMail: user.email.toString()),
-                '/friends': (context) =>
-                    FriendListScreen(userMail: user.email.toString()),
-                '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) =>
-                    NotificationScreen(userMail: user.email.toString()),
-              },
+            PersistentBottomNavBarItem(
+              icon: const Icon(CommunityMaterialIcons.treasure_chest),
+              title: ("Rewards"),
+              activeColorPrimary: Colors.deepOrange,
+              inactiveColorPrimary: Colors.grey,
+              routeAndNavigatorSettings: RouteAndNavigatorSettings(
+                initialRoute: '/quest',
+                routes: {
+                  '/quest': (context) =>
+                      QuestListScreen(userMail: user.email.toString()),
+                  '/reward': (context) =>
+                      RewardListScreen(userMail: user.email.toString()),
+                  '/friends': (context) =>
+                      FriendListScreen(userMail: user.email.toString()),
+                  '/user': (context) => UserScreen(user: user),
+                  '/notifications': (context) =>
+                      NotificationScreen(userMail: user.email.toString()),
+                },
+              ),
             ),
-          ),
-          PersistentBottomNavBarItem(
-            icon: const Icon(Icons.people_alt),
-            title: ("Friends"),
-            activeColorPrimary: Colors.green,
-            inactiveColorPrimary: Colors.grey,
-            routeAndNavigatorSettings: RouteAndNavigatorSettings(
-              initialRoute: '/quest',
-              routes: {
-                '/quest': (context) =>
-                    QuestListScreen(userMail: user.email.toString()),
-                '/reward': (context) =>
-                    RewardListScreen(userMail: user.email.toString()),
-                '/friends': (context) =>
-                    FriendListScreen(userMail: user.email.toString()),
-                '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) =>
-                    NotificationScreen(userMail: user.email.toString()),
-              },
+            PersistentBottomNavBarItem(
+              icon: const Icon(Icons.people_alt),
+              title: ("Friends"),
+              activeColorPrimary: Colors.green,
+              inactiveColorPrimary: Colors.grey,
+              routeAndNavigatorSettings: RouteAndNavigatorSettings(
+                initialRoute: '/quest',
+                routes: {
+                  '/quest': (context) =>
+                      QuestListScreen(userMail: user.email.toString()),
+                  '/reward': (context) =>
+                      RewardListScreen(userMail: user.email.toString()),
+                  '/friends': (context) =>
+                      FriendListScreen(userMail: user.email.toString()),
+                  '/user': (context) => UserScreen(user: user),
+                  '/notifications': (context) =>
+                      NotificationScreen(userMail: user.email.toString()),
+                },
+              ),
             ),
-          ),
-          PersistentBottomNavBarItem(
-            icon: const Icon(Icons.notifications),
-            title: ("Notifications"),
-            activeColorPrimary: Colors.amber,
-            inactiveColorPrimary: Colors.grey,
-            routeAndNavigatorSettings: RouteAndNavigatorSettings(
-              initialRoute: '/quest',
-              routes: {
-                '/quest': (context) =>
-                    QuestListScreen(userMail: user.email.toString()),
-                '/reward': (context) =>
-                    RewardListScreen(userMail: user.email.toString()),
-                '/friends': (context) =>
-                    FriendListScreen(userMail: user.email.toString()),
-                '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) =>
-                    NotificationScreen(userMail: user.email.toString()),
-              },
+            PersistentBottomNavBarItem(
+              icon: const Icon(Icons.notifications),
+              title: ("Notifications"),
+              activeColorPrimary: Colors.amber,
+              inactiveColorPrimary: Colors.grey,
+              routeAndNavigatorSettings: RouteAndNavigatorSettings(
+                initialRoute: '/quest',
+                routes: {
+                  '/quest': (context) =>
+                      QuestListScreen(userMail: user.email.toString()),
+                  '/reward': (context) =>
+                      RewardListScreen(userMail: user.email.toString()),
+                  '/friends': (context) =>
+                      FriendListScreen(userMail: user.email.toString()),
+                  '/user': (context) => UserScreen(user: user),
+                  '/notifications': (context) =>
+                      NotificationScreen(userMail: user.email.toString()),
+                },
+              ),
             ),
-          ),
-          PersistentBottomNavBarItem(
-            icon: const Icon(Icons.person),
-            title: ("My Profile"),
-            activeColorPrimary: Colors.blue,
-            inactiveColorPrimary: Colors.grey,
-            routeAndNavigatorSettings: RouteAndNavigatorSettings(
-              initialRoute: '/quest',
-              routes: {
-                '/quest': (context) =>
-                    QuestListScreen(userMail: user.email.toString()),
-                '/reward': (context) =>
-                    RewardListScreen(userMail: user.email.toString()),
-                '/friends': (context) =>
-                    FriendListScreen(userMail: user.email.toString()),
-                '/user': (context) => UserScreen(user: user),
-                '/notifications': (context) =>
-                    NotificationScreen(userMail: user.email.toString()),
-              },
+            PersistentBottomNavBarItem(
+              icon: const Icon(Icons.person),
+              title: ("My Profile"),
+              activeColorPrimary: Colors.blue,
+              inactiveColorPrimary: Colors.grey,
+              routeAndNavigatorSettings: RouteAndNavigatorSettings(
+                initialRoute: '/quest',
+                routes: {
+                  '/quest': (context) =>
+                      QuestListScreen(userMail: user.email.toString()),
+                  '/reward': (context) =>
+                      RewardListScreen(userMail: user.email.toString()),
+                  '/friends': (context) =>
+                      FriendListScreen(userMail: user.email.toString()),
+                  '/user': (context) => UserScreen(user: user),
+                  '/notifications': (context) =>
+                      NotificationScreen(userMail: user.email.toString()),
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

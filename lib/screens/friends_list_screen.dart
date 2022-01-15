@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:momentary_bliss/models/friend.dart';
 import 'package:momentary_bliss/models/globals.dart';
@@ -28,7 +31,9 @@ class FriendListScreen extends StatelessWidget {
                 body: Center(child: CircularProgressIndicator()),
               );
             case ConnectionState.active:
-              return _Screen(snapshot.data!, userMail);
+              {
+                return _Screen(snapshot.data!, userMail);
+              }
             case ConnectionState.none:
               return ErrorWidget("The stream was wrong (connectionState.none)");
             case ConnectionState.done:
@@ -64,6 +69,8 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
     deleteFriend(context.read<String>(), friend.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(vertical: 55, horizontal: 12),
         content: Text("You unfriended '${friend.mail}'"),
         action: SnackBarAction(
           label: "UNDO",
@@ -76,15 +83,14 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final systemBarHeight = MediaQuery.of(context).viewPadding.top;
+  Widget build(BuildContext buildContext) {
+    final systemBarHeight = MediaQuery.of(buildContext).viewPadding.top;
     return Column(
       children: [
         Container(
           decoration: const BoxDecoration(color: green),
           child: Padding(
-            padding:
-                EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
+            padding: EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
             child: Row(
               children: [
                 const Text("Friends",
@@ -95,7 +101,7 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                 const Expanded(child: SizedBox()),
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context).push(
+                    Navigator.of(buildContext).push(
                       MaterialPageRoute(
                         builder: (_) =>
                             FriendResultsScreen(userMail: widget.userMail),
@@ -125,27 +131,57 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                   itemBuilder: (context, index) {
                     final friend = widget.friends[index];
                     return Dismissible(
-                      key: Key(friend.id),
-                      onDismissed: (direction) {
-                        deleteWithUndo(context, friend);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
+                        key: Key(friend.id),
+                        onDismissed: (direction) {
+                          deleteWithUndo(context, friend);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
                               border: Border.all(color: Colors.green),
-                              borderRadius: BorderRadius.circular(8.0)),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              radius: 30.0,
-                              backgroundImage: NetworkImage(friend.avatar),
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: friend.selected ? green : Colors.white,
                             ),
-                            title: Text(friend.uid),
-                            subtitle: Text(friend.mail),
+                            child: ListTile(
+                                leading: CircleAvatar(
+                                  radius: 30.0,
+                                  backgroundImage: NetworkImage(friend.avatar),
+                                ),
+                                title: Text(friend.uid),
+                                subtitle: friend.selected
+                                    ? Text("${friend.mail} (Selected)")
+                                    : Text(friend.mail),
+                                onLongPress: () {
+                                  setState(() {
+                                    if (!friend.selected) {
+                                      setSelected(
+                                          widget.userMail, friend, true);
+                                      SnackBar snack = SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 55, horizontal: 12),
+                                        content: Text(
+                                            "Selected ${friend.mail} as your reward checker!"),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snack);
+                                    } else {
+                                      setSelected(
+                                          widget.userMail, friend, false);
+                                      SnackBar snack = const SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 55, horizontal: 12),
+                                        content: Text("Unselected friend"),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snack);
+                                    }
+                                  });
+                                }),
                           ),
-                        ),
-                      ),
-                    );
+                        ));
                   },
                   separatorBuilder: (BuildContext context, int index) =>
                       const Divider(

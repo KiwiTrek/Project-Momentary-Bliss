@@ -99,6 +99,8 @@ class _ScreenState extends State<_Screen> {
     deleteQuest(context.read<String>(), todo.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(vertical: 55, horizontal: 12),
         content: Text("You deleted '${todo.what}'"),
         action: SnackBarAction(
           label: "UNDO",
@@ -116,8 +118,7 @@ class _ScreenState extends State<_Screen> {
     return Column(
       children: [
         Container(
-          padding:
-                EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
+          padding: EdgeInsets.fromLTRB(16, 10 + systemBarHeight, 16, 10),
           decoration: const BoxDecoration(color: darkPurple),
           child: Row(
             children: [
@@ -139,8 +140,7 @@ class _ScreenState extends State<_Screen> {
                           snapshot,
                     ) {
                       if (!snapshot.hasData) {
-                        return const Center(
-                            child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       final doc = snapshot.data!;
                       final data = doc.data()!;
@@ -244,14 +244,9 @@ class _ScreenState extends State<_Screen> {
             ),
           ),
         ),
-    
-        // The "Add task part", should be on a separated screen
         Material(
           child: Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 12.0,
-                right: 12.0),
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
             child: Row(
               children: [
                 Expanded(

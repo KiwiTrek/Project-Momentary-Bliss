@@ -66,6 +66,8 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
     deleteNotification(context.read<String>(), notification.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(vertical: 55, horizontal: 12),
         content: Text("You deleted '${notification.what}'"),
         action: SnackBarAction(
           label: "UNDO",
@@ -138,7 +140,15 @@ class _ScreenState extends State<_Screen> with SingleTickerProviderStateMixin {
                           db
                               .doc("/Users/${notification.from}")
                               .update({'coins': current});
-                          deleteWithUndo(context, notification);
+                          deleteNotification(
+                              context.read<String>(), notification.id);
+                          addNotification(
+                              "${widget.userMail} has accepted your reward request",
+                              widget.userMail,
+                              notification.from,
+                              2,
+                              "",
+                              0);
                         });
                       });
                     },

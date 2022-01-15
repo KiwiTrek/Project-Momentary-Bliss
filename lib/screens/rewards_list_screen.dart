@@ -89,6 +89,8 @@ class _ScreenState extends State<_Screen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("You deleted '${reward.what}'"),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(vertical: 55, horizontal: 12),
         action: SnackBarAction(
           label: "UNDO",
           onPressed: () {
@@ -99,24 +101,55 @@ class _ScreenState extends State<_Screen> {
     );
   }
 
-  bool sendNotification(String userId, int value, String what) {
+  void checkReward(String userId, int value, String what) {
     final db = FirebaseFirestore.instance;
     db.doc("/Users/$userId").get().then((doc) {
       Map<String, dynamic> data = doc.data()!;
-      if (data["reward_checker"] == true) {
-        // final stream = userFriendSnapshots(widget.userMail);
-
-        //TODO: Change to send to all friends
-        String mail = "carloigle2001@gmail.com";
-        addNotification("$userId has requested a reward!", userId, mail, 1,
-            "$what: $value coins", value);
-        return true;
+      if (data["coins"] >= value) {
+        if (data["reward_checker"] == true) {
+          db.collection("/Users/$userId/friends").get().then((snapShot) {
+            String mail = "null";
+            List<Friend> friends = [];
+            for (final doc in snapShot.docs) {
+              friends.add(Friend.fromFirestore(doc.id, doc.data()));
+            }
+            for (final f in friends) {
+              if (f.selected) {
+                mail = f.mail;
+                break;
+              }
+            }
+            if (mail != "null") {
+              addNotification("$userId has requested a reward!", userId, mail,
+                  1, "$what: $value coins", value);
+              SnackBar snack = const SnackBar(
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.symmetric(vertical: 55, horizontal: 12),
+                content: Text("Sent reward to your selected friend!"),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snack);
+            } else {
+              SnackBar snack = const SnackBar(
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.symmetric(vertical: 55, horizontal: 12),
+                content: Text(
+                    "Select a friend or uncheck the friend approval first."),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snack);
+            }
+          });
+        } else {
+          updateCoins(userId, value);
+        }
       } else {
-        updateCoins(userId, value);
-        return false;
+        SnackBar snack = const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.symmetric(vertical: 55, horizontal: 12),
+          content: Text("You don't have enough coins to get this reward"),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snack);
       }
     });
-    return false;
   }
 
   @override
@@ -228,21 +261,12 @@ class _ScreenState extends State<_Screen> {
                           color: Colors.amber,
                         ),
                         onPressed: () {
-                          sendNotification(
+                          checkReward(
                               widget.userMail, reward.value, reward.what);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Sent reward to your friends!")),
-                          );
                         },
                       ),
                       onTap: () {
-                        sendNotification(
-                            widget.userMail, reward.value, reward.what);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Sent reward to your friends!")),
-                        );
+                        checkReward(widget.userMail, reward.value, reward.what);
                       },
                     ),
                   ),

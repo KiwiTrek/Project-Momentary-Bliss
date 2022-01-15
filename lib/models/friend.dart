@@ -5,18 +5,27 @@ class Friend {
   String mail;
   String avatar;
   String uid;
+  bool selected;
 
   Friend()
       : id = "-1",
         mail = "undefined",
         avatar = "undefined",
         uid = "undefined",
+        selected = false,
         super();
 
   Friend.fromFirestore(this.id, Map<String, dynamic> json)
       : avatar = json['avatar'],
         uid = json['uid'],
-        mail = json['mail'];
+        mail = json['mail'],
+        selected = json['selected'];
+
+  Friend.foundFriend(this.id, Map<String, dynamic> json)
+      : avatar = json['avatar'],
+        uid = json['uid'],
+        mail = json['mail'],
+        selected = false;
 }
 
 Stream<List<Friend>> userFriendSnapshots(String user) {
@@ -39,7 +48,7 @@ Stream<List<Friend>> findFriendList(String mail) {
     List<Friend> friends = [];
     for (final doc in query.docs) {
       if (doc.data()['mail'].toString().contains(mail)) {
-        friends.add(Friend.fromFirestore(doc.id, doc.data()));
+        friends.add(Friend.foundFriend(doc.id, doc.data()));
       }
     }
     return friends;
@@ -52,9 +61,24 @@ void addFriend(String user, String who) {
         db.collection("/Users/$user/friends").add({
           'avatar': value["avatar"],
           'uid': value["uid"],
-          'mail': value["mail"]
+          'mail': value["mail"],
+          'selected': value["selected"]
         })
       });
+}
+
+void setSelected(String user, Friend who, bool selected) {
+  final db = FirebaseFirestore.instance;
+  db.collection("/Users/$user/friends/").get().then((snapshot) {
+    List<Friend> friends = [];
+    for (final doc in snapshot.docs) {
+      friends.add(Friend.fromFirestore(doc.id, doc.data()));
+    }
+    for (final friend in friends) {
+      db.doc("/Users/$user/friends/${friend.id}").update({'selected': false});
+    }
+    db.doc("/Users/$user/friends/${who.id}").update({'selected': selected});
+  });
 }
 
 void deleteFriend(String user, String docId) {
@@ -64,7 +88,10 @@ void deleteFriend(String user, String docId) {
 
 void undeleteFriend(String user, Friend friend) {
   final db = FirebaseFirestore.instance;
-  db
-      .doc("/Users/$user/friends/${friend.id}")
-      .set({'avatar': friend.avatar, 'mail': friend.mail, 'uid': friend.uid});
+  db.doc("/Users/$user/friends/${friend.id}").set({
+    'avatar': friend.avatar,
+    'mail': friend.mail,
+    'uid': friend.uid,
+    'selected': friend.selected
+  });
 }
